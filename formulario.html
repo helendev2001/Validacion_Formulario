@@ -41,17 +41,41 @@
     </form>
 </body>
 <script>
-    // function comprobarContrasena() {
-    //     const contrasenaInput = document.getElementById("contrasena");
-    //     const contrasena = contrasenaInput.value;
-    //     const contrasenaPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).{8,12}$/;
+    function validarCedula(cedula) {
+        if (cedula.length !== 10 || isNaN(cedula)) {
+            return false;
+        }
+
+        const impares = [];
+        const pares = [];
+
+        for (let i = 0; i < 9; i++) {
+            if (i % 2 === 0) {
+                impares.push(parseInt(cedula[i]) * 2 > 9 ? parseInt(cedula[i]) * 2 - 9 : parseInt(cedula[i]) * 2);
+            } else {
+                pares.push(parseInt(cedula[i]));
+            }
+        }
+
+        const sumaImpares = impares.reduce((acc, val) => acc + val, 0);
+        const sumaPares = pares.reduce((acc, val) => acc + val, 0);
+        const totalSuma = sumaImpares + sumaPares;
+
+        const modulo10 = totalSuma % 10;
+        const digitoVerificador = modulo10 === 0 ? 0 : 10 - modulo10;
+
+        return digitoVerificador === parseInt(cedula[9]);
+
+        return true; 
+    }
+
+    function comprobarContrasena() {
+        const contrasenaInput = document.getElementById("contrasena");
+        const contrasena = contrasenaInput.value;
+        const contrasenaPattern = /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z\d]).{8,12}$/;
         
-    //     if (!contrasenaPattern.test(contrasena)) {
-    //         alert("La contraseña no cumple con los requisitos. Debe tener entre 8 y 12 caracteres, al menos una mayúscula, un número y un carácter especial.");
-    //         return false;
-    //     }
-    //     return true;
-    // }
+        return contrasenaPattern.test(contrasena);
+    }
 
     function mostrarContrasena() {
         const contrasenaInput = document.getElementById("contrasena");
@@ -60,6 +84,22 @@
         } else {
             contrasenaInput.type = "password";
         }
+    }
+    function validarFormulario() {
+        const cedulaInput = document.getElementsByName("cedula")[0];
+        const cedulaValue = cedulaInput.value;
+        
+        if (!validarCedula(cedulaValue)) {
+            alert("La cédula no es válida.");
+            return false;
+        }
+
+        if (!comprobarContrasena()) {
+            alert("La contraseña no cumple con los requisitos.");
+            return false;
+        }
+        
+        return true;
     }
 </script>
 </html>
